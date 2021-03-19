@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
-import { getRandomNumber, checkGuess } from '../utils'
+import { useState } from 'react'
+import { getRandomNumber, checkGuess, displayCheckMsg } from '../utils'
+import { Toaster } from './Toaster'
 
 export const Game = () => {
   const [randomNumber, setRandomNumber] = useState(getRandomNumber())
@@ -10,7 +11,9 @@ export const Game = () => {
   function handleGuessChange(e: any) {
     setGuess(e.target.value)
   }
+
   function checkWin() {
+    // check for an empty guess
     if (!guess) {
       setToaster('Oops! Please enter a guess.')
       return setTimeout(() => {
@@ -18,47 +21,37 @@ export const Game = () => {
       }, 2000);
     }
 
-    const gameCondition = checkGuess(Number(guess), randomNumber);
+    // decrement triesLeft
+    setTriesLeft(triesLeft - 1)
 
-    if (gameCondition === -1) {
-      setToaster('Oh no, too low.')
-      setTimeout(() => {
-        setToaster('')
-      }, 2000);
-      setTriesLeft(triesLeft - 1)
-    } else if (gameCondition === 1) {
-      setToaster('Yikes! Too high.')
-      setTimeout(() => {
-        setToaster('')
-      }, 2000);
-      setTriesLeft(triesLeft - 1)
-    }
-    if (gameCondition === 0) {
-      setToaster('NICE! You guessed it!')
-      setTimeout(() => {
-        setToaster('')
-      }, 2000);
-      setRandomNumber(getRandomNumber())
-      setGuess(null)
-      setTriesLeft(3)
-    }
+    // compare numbers
+    const guessCheckResult = checkGuess(Number(guess), randomNumber)
+
+    // display result using guessCheckResult
+    displayCheckMsg(guessCheckResult, setToaster, setRandomNumber, setGuess, setTriesLeft)
   }
 
   return (
     <div>
-      <p>{toaster}</p>
-      <h1>Let's Play Guess A Number</h1>
-      <p>I am thinking of a number between 1 and 10. You have 3 tries to guess the correct number. You can do it!</p>
+      <Toaster message={toaster} />
 
-      <p>Tries Left: {triesLeft}</p>
-      <p>ANS: {randomNumber}</p>
+      <section className={triesLeft === 0 ? 'hidden' : 'visible'}>
+        <h1>Let's Play Guess A Number</h1>
 
-      <label>
-        Your Guess:
+        <p>I am thinking of a number between 1 and 10. You have 3 tries to guess the correct number. You can do it!</p>
+
+        <p>Tries Left: {triesLeft}</p>
+        <p>{randomNumber}</p>
+        <label>
+          Your Guess:
         <input type="number" onChange={handleGuessChange} />
-      </label>
+        </label>
 
-      <button onClick={checkWin}>Guess!</button>
+        <button onClick={checkWin}>Guess!</button>
+      </section>
+
+      {/* GAME OVER */}
+      <h1 className={triesLeft === 0 ? 'visible' : 'hidden'}>Oh no... no more tries left</h1>
     </div >
   )
 }
