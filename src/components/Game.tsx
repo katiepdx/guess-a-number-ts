@@ -32,22 +32,29 @@ export const Game = () => {
   }
 
   return (
-    <div>
+    <div className='game-container'>
       <Toaster message={toaster} />
 
       <section className={triesLeft === 0 ? 'hidden' : 'visible'}>
-        <h1>Let's Play Guess A Number</h1>
+        <header>
+          <h1>Let's Play Guess A Number</h1>
+        </header>
 
-        <p>I am thinking of a number between 1 and 10. You have 3 tries to guess the correct number. You can do it!</p>
+        <section className="instructions">
+          <p>I am thinking of a number between 1 and 10. You have 3 tries to guess the correct number. You can do it!</p>
 
-        <p>Tries Left: {triesLeft}</p>
-        <p>{randomNumber}</p>
-        <label>
-          Your Guess:
-        <input type="number" onChange={handleGuessChange} />
-        </label>
+          <p>Tries Left: {triesLeft}</p>
+          <p>{randomNumber}</p>
+        </section>
 
-        <button onClick={checkWin}>Guess!</button>
+        <section className="game">
+          <label htmlFor="guess">
+            <p>Your Guess</p>
+            <input type="number" id="guess" name="guess" onChange={handleGuessChange} />
+          </label>
+
+          <button onClick={checkWin}>Guess!</button>
+        </section>
       </section>
 
       {/* GAME OVER */}
